@@ -9,4 +9,54 @@ html {
 body {
   margin: 0;
   min-height: 100%;
+  background-color: rgb(8, 57, 8);
+  color: rgb(199, 146, 10);
+}
+
+.main-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dealer-section,
+.player-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 3rem 0rem;
+}
+
+.total-dealer,
+.dealer-cards,
+.total-player,
+.player-cards {
+  display: flex;
+  margin: 1rem;
+}
+
+.player-cards p {
+  padding: 0.5rem;
+}
+
+.dealer-cards p {
+  padding: 0.5rem;
+}
+
+button {
+  padding: 1rem;
+  border: solid rgb(199, 146, 10) 3px;
+  border-radius: 3px;
+  font-size: 1rem;
+  margin: 0rem 6rem;
+}
+
+.button-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.hide {
+  display: none;
 }
