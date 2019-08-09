@@ -24,28 +24,50 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   margin: 3rem 0rem;
+  border: solid rgb(228, 218, 218) 3px;
+  padding: 1rem;
+  background-color: rgb(79, 36, 36);
 }
 
 .total-dealer,
-.dealer-cards,
-.total-player,
-.player-cards {
+.total-player {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: 1rem;
 }
 
-.player-cards p {
-  padding: 0.5rem;
+.dealer-total,
+.player-total {
+  border: solid white 2px;
+  background-color: black;
+  padding: 1.5rem;
+  font-size: 1.5rem;
 }
 
+.dealer-cards,
+.player-cards {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.player-cards p,
 .dealer-cards p {
   padding: 0.5rem;
+  font-size: 1.5rem;
+  border: solid goldenrod 5px;
+  margin: 0 2rem;
+  padding: 6rem 0.5rem;
+  background-color: rgb(225, 223, 223);
+  color: black;
+  border-radius: 5px;
 }
 
 button {
-  padding: 1rem;
+  padding: 0.5rem 2rem;
   border: solid rgb(199, 146, 10) 3px;
   border-radius: 3px;
   font-size: 1rem;
@@ -59,4 +81,8 @@ button {
 
 .hide {
   display: none;
+}
+
+.red-text {
+  color: red;
 }

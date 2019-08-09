@@ -1,6 +1,9 @@
-const suits = ["Hearts", "Diamonds", "Spades", "Clubs"]
+const suits = ["hearts", "diamonds", "spades", "clubs"]
 const ranks = [
-  { name: "Ace", value: 11 },
+  {
+    name: "ace",
+    value: 11
+  },
   { name: "2", value: 2 },
   { name: "3", value: 3 },
   { name: "4", value: 4 },
@@ -10,14 +13,16 @@ const ranks = [
   { name: "8", value: 8 },
   { name: "9", value: 9 },
   { name: "10", value: 10 },
-  { name: "Jack", value: 11 },
-  { name: "Queen", value: 11 },
-  { name: "King", value: 11 }
+  { name: "jack", value: 11 },
+  { name: "queen", value: 11 },
+  { name: "king", value: 11 }
 ]
 
-const deck = []
-const dealerHand = []
-const playerHand = []
+let deck = []
+let dealerHand = []
+let playerHand = []
+let playerHandTotal = 0
+let dealerHandTotal = 0
 
 const createDeck = () => {
   // loop through the suits
@@ -54,54 +59,41 @@ const dealCardsToDealer = () => {
   console.log(dealerHand)
 }
 
-const getDealerHandTotal = () => {
-  let handTotal = 0
-  for (let i = 0; i < dealerHand.length; i++) {
-    const card = dealerHand[i]
-    handTotal += card.value
-  }
-  console.log(handTotal)
-}
-
 const dealCardsToPlayer = () => {
   // go through deck and add two cards to player hand
   for (let i = 0; i < 2; i++) {
     const dealtCard = deck.pop()
     playerHand.push(dealtCard)
+    // take the first two cards of the player deck
+    const newCardOne = document.createElement("p")
+    // add them to the DOM
+    newCardOne.textContent = `${dealtCard.rank} of ${dealtCard.suit}`
+    document.querySelector(".player-cards").appendChild(newCardOne)
   }
   console.log(playerHand)
 }
 
-const printPlayerCards = () => {
-  // take the first two cards of the player deck
-  const newCardOne = document.createElement("p")
-  const newCardTwo = document.createElement("p")
-  // add them to the DOM
-  newCardOne.textContent = `${playerHand[0].rank} of ${playerHand[0].suit}`
-  newCardTwo.textContent = `${playerHand[1].rank} of ${playerHand[1].suit}`
-  document.querySelector(".player-cards").appendChild(newCardOne)
-  document.querySelector(".player-cards").appendChild(newCardTwo)
-}
-
 const getPlayerHandTotal = () => {
-  let handTotal = 0
+  let playerHandTotal = 0
   for (let i = 0; i < playerHand.length; i++) {
     const card = playerHand[i]
-    handTotal += card.value
+    playerHandTotal += card.value
   }
-  console.log(handTotal)
-  document.querySelector(".player-total").textContent = handTotal.toString()
-  if (handTotal < 21) {
+  // console.log(playerHandTotal)
+  document.querySelector(
+    ".player-total"
+  ).textContent = playerHandTotal.toString()
+  if (playerHandTotal < 21) {
     const hitButton = document.querySelector(".hit-button")
     hitButton.addEventListener("click", dealOneCardToPlayer)
-  } else if (handTotal > 21) {
+  } else if (playerHandTotal > 21) {
     document.querySelectorAll("button.button").forEach(elem => {
       elem.disabled = true
     })
     const bustMessage = document.createElement("h2")
     bustMessage.textContent = "OVER 21!! BUST!!!"
     document.querySelector(".button-section").appendChild(bustMessage)
-  } else if (handTotal === 21) {
+  } else if (playerHandTotal === 21) {
     document.querySelectorAll("button.button").forEach(elem => {
       elem.disabled = true
     })
@@ -115,34 +107,67 @@ const dealOneCardToPlayer = () => {
   for (let i = 0; i < 1; i++) {
     const dealtCard = deck.pop()
     playerHand.push(dealtCard)
+    const newCardOne = document.createElement("p")
+    // add them to the DOM
+    newCardOne.textContent = `${dealtCard.rank} of ${dealtCard.suit}`
+    document.querySelector(".player-cards").appendChild(newCardOne)
   }
-  const newCardOne = document.createElement("p")
-  // add them to the DOM
-  newCardOne.textContent = `${playerHand[0].rank} of ${playerHand[0].suit}`
-  document.querySelector(".player-cards").appendChild(newCardOne)
+
   getPlayerHandTotal()
 }
 const printDealerCards = () => {
-  // display the dealer's hand to the DOM
-  // take the first two cards of the dealer deck
-  const newCardOne = document.createElement("p")
-  const newCardTwo = document.createElement("p")
-  // add them to the DOM
-  newCardOne.textContent = `${dealerHand[0].rank} of ${dealerHand[0].suit}`
-  newCardTwo.textContent = `${dealerHand[1].rank} of ${dealerHand[1].suit}`
-  document.querySelector(".dealer-cards").appendChild(newCardOne)
-  document.querySelector(".dealer-cards").appendChild(newCardTwo)
+  for (let i = 0; i < 2; i++) {
+    const dealtCard = dealerHand[i]
+    const newCardOne = document.createElement("p")
+    // add them to the DOM
+    newCardOne.textContent = `${dealtCard.rank} of ${dealtCard.suit}`
+    document.querySelector(".dealer-cards").appendChild(newCardOne)
+    document.querySelectorAll("button.button").forEach(elem => {
+      elem.disabled = true
+    })
+    // display the dealer's hand to the DOM
+    // take the first two cards of the dealer deck
+  }
+  getDealerHandTotal()
+  compareHandTotals()
+}
+const getDealerHandTotal = () => {
+  let dealerHandTotal = 0
+  for (let i = 0; i < dealerHand.length; i++) {
+    const card = dealerHand[i]
+    dealerHandTotal += card.value
+  }
+  console.log(dealerHandTotal)
+  document.querySelector(
+    ".dealer-total"
+  ).textContent = dealerHandTotal.toString()
+}
+const compareHandTotals = () => {}
+
+const resetTheGame = () => {
+  deck = []
+  dealerHand = []
+  playerHand = []
+  document.querySelectorAll("button.button").forEach(elem => {
+    elem.disabled = false
+  })
+  document.querySelector(".dealer-cards").textContent = ""
+
+  document.querySelector(".player-cards").textContent = ""
+  document.querySelector(".player-total").textContent = "0"
+  document.querySelector(".dealer-total").textContent = "0"
+  main()
 }
 
 const main = () => {
   createDeck()
   shuffleDeck()
   dealCardsToDealer()
-  getDealerHandTotal()
   dealCardsToPlayer()
-  printPlayerCards()
   getPlayerHandTotal()
 }
+
+document.querySelector(".reset-game").addEventListener("click", resetTheGame)
 
 document
   .querySelector(".stand-button")
