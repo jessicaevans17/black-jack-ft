@@ -13,9 +13,9 @@ const ranks = [
   { name: "8", value: 8 },
   { name: "9", value: 9 },
   { name: "10", value: 10 },
-  { name: "jack", value: 11 },
-  { name: "queen", value: 11 },
-  { name: "king", value: 11 }
+  { name: "jack", value: 10 },
+  { name: "queen", value: 10 },
+  { name: "king", value: 10 }
 ]
 
 let deck = []
@@ -23,6 +23,13 @@ let dealerHand = []
 let playerHand = []
 let playerHandTotal = 0
 let dealerHandTotal = 0
+const loseMessage = document.createElement("h3")
+loseMessage.textContent = "YOU LOSE! TRY AGAIN!"
+const blackJackMessage = document.createElement("h3")
+blackJackMessage.textContent = "21!!!!! BLACKJACKKKKKKK!!!!!"
+const enableHitButton = document.querySelector(".hit-button")
+const winMessage = document.createElement("h3")
+winMessage.textContent = "YAY! YOU WIN!"
 
 const createDeck = () => {
   // loop through the suits
@@ -33,7 +40,8 @@ const createDeck = () => {
       deck.push({
         rank: newRank.name,
         value: newRank.value,
-        suit: newSuit
+        suit: newSuit,
+        image: `./images/cards/${newRank.name}_of_${newSuit}.svg`
       })
     }
   }
@@ -48,6 +56,43 @@ const shuffleDeck = () => {
     deck[j] = temp
   }
   console.log(deck)
+
+  for (let i = 0; i < 2; i++) {
+    dealOneCardToPlayer()
+  }
+  dealCardsToDealer()
+}
+
+const dealOneCardToPlayer = () => {
+  for (let i = 0; i < 1; i++) {
+    const dealtCard = deck.pop()
+    playerHand.push(dealtCard)
+    const newElement = document.createElement("img")
+    newElement.src = dealtCard.image
+    document.querySelector(".player-cards").appendChild(newElement)
+  }
+
+  getPlayerHandTotal()
+
+  if (playerHandTotal === 21) {
+    document.querySelector(".total-player").appendChild(blackJackMessage)
+  } else if (playerHandTotal > 21) {
+    document.querySelector(".total-player").appendChild(loseMessage)
+  } else if (playerHandTotal < 21) {
+    enableHitButton.addEventListener("click", dealOneCardToPlayer)
+  }
+}
+
+const getPlayerHandTotal = () => {
+  playerHandTotal = 0
+  for (let i = 0; i < playerHand.length; i++) {
+    const card = playerHand[i]
+    playerHandTotal += card.value
+    document.querySelector(
+      ".player-total"
+    ).textContent = playerHandTotal.toString()
+  }
+  console.log(playerHandTotal)
 }
 
 const dealCardsToDealer = () => {
@@ -59,90 +104,43 @@ const dealCardsToDealer = () => {
   console.log(dealerHand)
 }
 
-const dealCardsToPlayer = () => {
-  // go through deck and add two cards to player hand
-  for (let i = 0; i < 2; i++) {
-    const dealtCard = deck.pop()
-    playerHand.push(dealtCard)
-    // take the first two cards of the player deck
-    const newCardOne = document.createElement("p")
-    // add them to the DOM
-    newCardOne.textContent = `${dealtCard.rank} of ${dealtCard.suit}`
-    document.querySelector(".player-cards").appendChild(newCardOne)
-  }
-  console.log(playerHand)
-}
-
-const getPlayerHandTotal = () => {
-  let playerHandTotal = 0
-  for (let i = 0; i < playerHand.length; i++) {
-    const card = playerHand[i]
-    playerHandTotal += card.value
-  }
-  // console.log(playerHandTotal)
-  document.querySelector(
-    ".player-total"
-  ).textContent = playerHandTotal.toString()
-  if (playerHandTotal < 21) {
-    const hitButton = document.querySelector(".hit-button")
-    hitButton.addEventListener("click", dealOneCardToPlayer)
-  } else if (playerHandTotal > 21) {
-    document.querySelectorAll("button.button").forEach(elem => {
-      elem.disabled = true
-    })
-    const bustMessage = document.createElement("h2")
-    bustMessage.textContent = "OVER 21!! BUST!!!"
-    document.querySelector(".button-section").appendChild(bustMessage)
-  } else if (playerHandTotal === 21) {
-    document.querySelectorAll("button.button").forEach(elem => {
-      elem.disabled = true
-    })
-    const winMessage = document.createElement("h2")
-    winMessage.textContent = "BLACKJACK!"
-    document.querySelector(".button-section").appendChild(winMessage)
+const getDealerHandTotal = () => {
+  dealerHandTotal = 0
+  for (let i = 0; i < dealerHand.length; i++) {
+    const card = dealerHand[i]
+    dealerHandTotal += card.value
   }
 }
 
-const dealOneCardToPlayer = () => {
-  for (let i = 0; i < 1; i++) {
-    const dealtCard = deck.pop()
-    playerHand.push(dealtCard)
-    const newCardOne = document.createElement("p")
-    // add them to the DOM
-    newCardOne.textContent = `${dealtCard.rank} of ${dealtCard.suit}`
-    document.querySelector(".player-cards").appendChild(newCardOne)
-  }
-
-  getPlayerHandTotal()
-}
 const printDealerCards = () => {
   for (let i = 0; i < 2; i++) {
     const dealtCard = dealerHand[i]
-    const newCardOne = document.createElement("p")
+    const newCard = document.createElement("img")
     // add them to the DOM
-    newCardOne.textContent = `${dealtCard.rank} of ${dealtCard.suit}`
-    document.querySelector(".dealer-cards").appendChild(newCardOne)
+    newCard.src = dealtCard.image
+    document.querySelector(".dealer-cards").appendChild(newCard)
     document.querySelectorAll("button.button").forEach(elem => {
       elem.disabled = true
     })
     // display the dealer's hand to the DOM
     // take the first two cards of the dealer deck
+    document.querySelector(
+      ".dealer-total"
+    ).textContent = dealerHandTotal.toString()
+
+    getDealerHandTotal()
+
+    if (dealerHandTotal < playerHandTotal) {
+      console.log("You win!")
+      document.querySelector(".total-dealer").appendChild(winMessage)
+    } else if (dealerHandTotal > playerHandTotal && dealerHandTotal <= 21) {
+      console.log("You lose")
+      document.querySelector(".total-dealer").appendChild(loseMessage)
+    } else if (dealerHandTotal === playerHandTotal) {
+      console.log("It's a draw!")
+    }
   }
-  getDealerHandTotal()
-  compareHandTotals()
 }
-const getDealerHandTotal = () => {
-  let dealerHandTotal = 0
-  for (let i = 0; i < dealerHand.length; i++) {
-    const card = dealerHand[i]
-    dealerHandTotal += card.value
-  }
-  console.log(dealerHandTotal)
-  document.querySelector(
-    ".dealer-total"
-  ).textContent = dealerHandTotal.toString()
-}
-const compareHandTotals = () => {}
 
 const resetTheGame = () => {
   deck = []
@@ -152,7 +150,6 @@ const resetTheGame = () => {
     elem.disabled = false
   })
   document.querySelector(".dealer-cards").textContent = ""
-
   document.querySelector(".player-cards").textContent = ""
   document.querySelector(".player-total").textContent = "0"
   document.querySelector(".dealer-total").textContent = "0"
@@ -162,15 +159,12 @@ const resetTheGame = () => {
 const main = () => {
   createDeck()
   shuffleDeck()
-  dealCardsToDealer()
-  dealCardsToPlayer()
-  getPlayerHandTotal()
 }
+
+document.querySelector(".start-game").addEventListener("click", main)
 
 document.querySelector(".reset-game").addEventListener("click", resetTheGame)
 
 document
   .querySelector(".stand-button")
   .addEventListener("click", printDealerCards)
-
-document.addEventListener("DOMContentLoaded", main)
