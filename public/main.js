@@ -26,10 +26,12 @@ let dealerHandTotal = 0
 const loseMessage = document.createElement("h3")
 loseMessage.textContent = "YOU LOSE! TRY AGAIN!"
 const blackJackMessage = document.createElement("h3")
-blackJackMessage.textContent = "21!!!!! BLACKJACKKKKKKK!!!!!"
+blackJackMessage.textContent = "BLACKJACK!"
 const enableHitButton = document.querySelector(".hit-button")
 const winMessage = document.createElement("h3")
 winMessage.textContent = "YAY! YOU WIN!"
+const drawMessage = document.createElement("h3")
+drawMessage.textContent = "IT'S A DRAW"
 
 const createDeck = () => {
   // loop through the suits
@@ -60,7 +62,14 @@ const shuffleDeck = () => {
   for (let i = 0; i < 2; i++) {
     dealOneCardToPlayer()
   }
-  dealCardsToDealer()
+  for (let j = 0; j < 2; j++) {
+    dealOneCardToDealer()
+  }
+}
+const main = () => {
+  createDeck()
+  shuffleDeck()
+  document.querySelector(".dealer-total").textContent = "???"
 }
 
 const dealOneCardToPlayer = () => {
@@ -75,9 +84,11 @@ const dealOneCardToPlayer = () => {
   getPlayerHandTotal()
 
   if (playerHandTotal === 21) {
-    document.querySelector(".total-player").appendChild(blackJackMessage)
+    showResults()
+    document.querySelector(".results-section").appendChild(blackJackMessage)
   } else if (playerHandTotal > 21) {
-    document.querySelector(".total-player").appendChild(loseMessage)
+    showResults()
+    document.querySelector(".results-section").appendChild(loseMessage)
   } else if (playerHandTotal < 21) {
     enableHitButton.addEventListener("click", dealOneCardToPlayer)
   }
@@ -95,13 +106,13 @@ const getPlayerHandTotal = () => {
   console.log(playerHandTotal)
 }
 
-const dealCardsToDealer = () => {
+const dealOneCardToDealer = () => {
   // go through deck and add two cards to dealer hand
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 1; i++) {
     const dealtCard = deck.pop()
     dealerHand.push(dealtCard)
+    getDealerHandTotal()
   }
-  console.log(dealerHand)
 }
 
 const getDealerHandTotal = () => {
@@ -122,24 +133,37 @@ const printDealerCards = () => {
     document.querySelectorAll("button.button").forEach(elem => {
       elem.disabled = true
     })
-    // display the dealer's hand to the DOM
-    // take the first two cards of the dealer deck
-    document.querySelector(
-      ".dealer-total"
-    ).textContent = dealerHandTotal.toString()
-
-    getDealerHandTotal()
-
-    if (dealerHandTotal < playerHandTotal) {
-      console.log("You win!")
-      document.querySelector(".total-dealer").appendChild(winMessage)
-    } else if (dealerHandTotal > playerHandTotal && dealerHandTotal <= 21) {
-      console.log("You lose")
-      document.querySelector(".total-dealer").appendChild(loseMessage)
-    } else if (dealerHandTotal === playerHandTotal) {
-      console.log("It's a draw!")
-    }
   }
+  const displayedTotal = document.querySelector(".dealer-total")
+  displayedTotal.textContent = dealerHandTotal.toString()
+
+  if (dealerHandTotal > playerHandTotal && dealerHandTotal < 22) {
+    showResults()
+    document.querySelector(".results-section").appendChild(loseMessage)
+  } else if (dealerHandTotal < playerHandTotal) {
+    showResults()
+    document.querySelector(".results-section").appendChild(winMessage)
+  } else if (dealerHandTotal === playerHandTotal) {
+    document.querySelector(".results-section").appendChild(drawMessage)
+  }
+}
+
+const showResults = () => {
+  const hideHit = document.querySelector(".hit-button")
+  hideHit.classList.add("hide")
+  const hideStand = document.querySelector(".stand-button")
+  hideStand.classList.add("hide")
+  const showResults = document.querySelector(".results-section")
+  showResults.classList.remove("hide")
+}
+
+const hideResults = () => {
+  const hideHit = document.querySelector(".hit-button")
+  hideHit.classList.remove("hide")
+  const hideStand = document.querySelector(".stand-button")
+  hideStand.classList.remove("hide")
+  const showResults = document.querySelector(".results-section")
+  showResults.classList.add("hide")
 }
 
 const resetTheGame = () => {
@@ -149,6 +173,11 @@ const resetTheGame = () => {
   document.querySelectorAll("button.button").forEach(elem => {
     elem.disabled = false
   })
+  hideResults()
+  const resultsSection = document.querySelector(".results-section")
+  while (resultsSection.hasChildNodes()) {
+    resultsSection.removeChild(resultsSection.lastChild)
+  }
   document.querySelector(".dealer-cards").textContent = ""
   document.querySelector(".player-cards").textContent = ""
   document.querySelector(".player-total").textContent = "0"
@@ -156,12 +185,7 @@ const resetTheGame = () => {
   main()
 }
 
-const main = () => {
-  createDeck()
-  shuffleDeck()
-}
-
-document.querySelector(".start-game").addEventListener("click", main)
+document.addEventListener("DOMContentLoaded", main)
 
 document.querySelector(".reset-game").addEventListener("click", resetTheGame)
 
